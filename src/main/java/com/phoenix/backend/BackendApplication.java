@@ -16,19 +16,5 @@ public class BackendApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);
-
-    }
-
-    @Bean
-    public CommandLineRunner demo(AuthRepository repository) {
-        return (args) -> {
-            log.info("Logs de la aplicacion");
-//            log.info(repository.sp_print_hello_world_estadiadvt("java"));
-            if (repository.sp_get_auths_verify_user_estadiadvt("username", "password")) {
-                log.info("El usuario esta registrado en la base");
-            } else {
-                log.info("El NO esta registrado en la base");
-            }
-        };
     }
 }
