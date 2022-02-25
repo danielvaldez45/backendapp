@@ -29,8 +29,9 @@ public class AuthController {
         return true;
     }
 
-    @PostMapping(value = "/login")
+    @PostMapping(value = "/login", produces = "application/json")
     ResponseEntity<Object> Login(@RequestBody UserAuth userAuth) {
+        System.out.println(userAuth.toString());
         //Recuperamos los parametros de la peticion.
         String username = userAuth.getUsername();
         String password = userAuth.getPassword();
@@ -40,16 +41,9 @@ public class AuthController {
         isExistsUser = repository.sp_get_auths_verify_user_estadiadvt(username, password);
 
         ResponseHandler response = new ResponseHandler();
-        try {
-            if (isExistsUser) {
-                //Aqui necesito response con un json.
-                return response.generateResponse("Hola mundo", HttpStatus.OK, userAuth);
-                //return response;
-                //return ResponseHandler.generateResponse("Successfully added data!", HttpStatus.OK, true);
-            }
-        } catch (HttpMessageNotWritableException ex) {
-            ex.printStackTrace();
+        if (isExistsUser) {
+            return response.generateResponse("Peticion exitosa: ", HttpStatus.OK, userAuth);
         }
-        return response.generateResponse("hola mundo", HttpStatus.I_AM_A_TEAPOT, userAuth);
+        return response.generateResponse("El usuario no existe en la base de datos: ", HttpStatus.I_AM_A_TEAPOT, userAuth);
     }
 }
