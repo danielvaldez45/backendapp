@@ -1,6 +1,6 @@
 package com.phoenix.backend;
 
-import com.phoenix.backend.auth.AuthRepository;
+import com.phoenix.backend.auth.login.repository.AuthRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.slf4j.Logger;
