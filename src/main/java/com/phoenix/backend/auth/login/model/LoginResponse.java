@@ -1,26 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.phoenix.backend.auth.login.model;
 
 /**
  *
  * @author daniel
  */
-public class Response {
+public class LoginResponse {
     private int code;
     private String message;
     private User data;
+    private String token;
 
-    public Response(int code, String message, User data) {
+    public LoginResponse(int code, String message, User data) {
         this.code = code;
         this.message = message;
         this.data = data;
     }
-
-    public Response() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    
+    public LoginResponse(int code, String message, User data, String token) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+        this.token = token;
     }
 
     public int getCode() {
@@ -46,5 +46,12 @@ public class Response {
     public void setData(User data) {
         this.data = data;
     }
-    
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }   
 }

@@ -4,12 +4,16 @@ package com.phoenix.backend.auth.login.model;
  *
  * @author daniel Esta clase representa un objeto request.
  */
-public class Request {
+public class LoginRequest {
 
     private String username;
     private String password;
 
-    public Request(String username, String password) {
+    public LoginRequest() {
+    }
+    
+    
+    public LoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }

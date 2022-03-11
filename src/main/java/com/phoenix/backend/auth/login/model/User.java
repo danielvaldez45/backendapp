@@ -7,6 +7,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ *
+ * @author daniel
+ * Este objeto objeto de domiio representa una entidad de la tabla: cat_users.
+ */
+
 @Entity
 @Table(name="cat_auths")
 public class User implements Serializable {

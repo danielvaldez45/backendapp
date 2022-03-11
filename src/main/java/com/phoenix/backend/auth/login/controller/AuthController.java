@@ -1,10 +1,13 @@
 package com.phoenix.backend.auth.login.controller;
 
-import com.phoenix.backend.auth.login.model.Request;
-import com.phoenix.backend.auth.login.model.Response;
+import com.phoenix.backend.auth.login.model.LoginRequest;
+import com.phoenix.backend.auth.login.model.LoginResponse;
+import com.phoenix.backend.auth.login.model.LogoutRequest;
+import com.phoenix.backend.auth.login.model.LogoutResponse;
 import com.phoenix.backend.auth.login.repository.AuthRepository;
 
 import com.phoenix.backend.auth.login.model.User;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,13 +27,14 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    boolean Login() {
-        return true;
+    String Login() {
+
+        return "Hola mundo";
     }
 
-    @PostMapping(value = "/login", consumes="application/json" ,produces = "application/json")
+    @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
     @ResponseBody
-    ResponseEntity Login(@RequestBody Request requestLogin) {
+    ResponseEntity Login(@RequestBody LoginRequest requestLogin) {
 
         String username;
         String password;
@@ -41,21 +45,50 @@ public class AuthController {
 
         //Creamos un objeto de tipo usuario.
         User user = new User(username, password);
-        
+
         //Asignamos una bandera y ejecutamos el Stored Procedured.
         boolean isExistsUser;
         //Refactorizar esto y renombrarlo como un metodo
         isExistsUser = repository.sp_get_auths_verify_user_estadiadvt(username, password);
 
-        if (isExistsUser) {    
+        if (isExistsUser) {
+            //Generar un token fake y settearlo en el cuerpo de la respuesta.
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new Response(100, "Peticion exitosa", user));
+                    .body(new LoginResponse(100, "Peticion exitosa", user, "12345678"));
 
         }
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new Response(102, "Algo fallo en el servidor", user));
+                .body(new LoginResponse(102, "Algo fallo en el servidor", user));
+    }
+
+    @PostMapping(value = "/logout", consumes = "application/json", produces = "application/json")
+    @ResponseBody
+    ResponseEntity logout(@RequestBody LogoutRequest requestLogin) {
+        String token;
+        token = requestLogin.getToken();
+
+        if (token.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new LogoutResponse(105, "Error, no existe token."));
+        }
+
+        //Validar el token en el sp (stored procedure). Consiste en saber si existe el token en la base de datos.
+        //boolean isToken = true;
+        
+        //Si el token NO es valido se ejecuta el if
+        if (!token.equals("12345")) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new LogoutResponse(105, "El token no es valido o expiro"));
+        }
+
+        //Finalmente
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new LogoutResponse(100, "Se cerro la sesion con exito"));
     }
 
     //<editor-fold defaultstate="collapsed" desc="register function">
