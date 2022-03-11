@@ -4,6 +4,7 @@ import com.phoenix.backend.auth.login.model.LoginRequest;
 import com.phoenix.backend.auth.login.model.LoginResponse;
 import com.phoenix.backend.auth.login.model.LogoutRequest;
 import com.phoenix.backend.auth.login.model.LogoutResponse;
+import com.phoenix.backend.auth.login.model.RegisterRequest;
 import com.phoenix.backend.auth.login.repository.AuthRepository;
 
 import com.phoenix.backend.auth.login.model.User;
@@ -26,6 +27,44 @@ public class AuthController {
         this.repository = repository;
     }
 
+    //<editor-fold defaultstate="collapsed" desc="register function">
+    @PostMapping(value = "/register", produces = "application/json")
+    void register(@RequestBody RegisterRequest registerUser) {
+        //Destructuramos el objeto y setteamos los valores en un objeto.
+        boolean isRegister = true;
+        //Entidad User
+        String name;
+        Sring lastName;
+        int age;
+        
+        //Entidad Auth
+        String username;
+        String email;
+        String password;
+
+        //Recuperamos los parametros de la peticion.
+        /*username = registerUser.getUsername();
+        email = registerUser.getEmail();
+        password = registerUser.getPassword();
+        
+        User user = new User();
+        //Asignamos una bandera y ejecutamos el Stored Procedured.
+        //Valida las credenciales mediante snippets hardcode. Si es true significa que no esta registrado
+        if (!username.equals("daniel210")) {
+            isRegister = false;
+        }*/
+
+        //isExistsUser = repository.sp_get_auths_verify_user_estadiadvt(username, password);
+        
+        if (!isRegister) {
+            //return response.generateResponse("Peticion exitosa. Usuario ha sido registrado con exito", HttpStatus.OK, registerUser);
+        }
+
+       //return response.generateResponse("Error, el usuario existe en la base de datos. Inicia sesion para continuar", HttpStatus.I_AM_A_TEAPOT, registerUser);
+    }
+
+    //</editor-fold>
+    
     @GetMapping("/login")
     String Login() {
 
@@ -77,7 +116,6 @@ public class AuthController {
 
         //Validar el token en el sp (stored procedure). Consiste en saber si existe el token en la base de datos.
         //boolean isToken = true;
-        
         //Si el token NO es valido se ejecuta el if
         if (!token.equals("12345")) {
             return ResponseEntity
@@ -91,32 +129,4 @@ public class AuthController {
                 .body(new LogoutResponse(100, "Se cerro la sesion con exito"));
     }
 
-    //<editor-fold defaultstate="collapsed" desc="register function">
-    /*@PostMapping(value = "/register", produces = "application/json")
-    ResponseEntity<Object> register(@RequestBody UserAuth registerUser) {
-        boolean isRegister = true;
-        String username;
-        String email;
-        String password;
-
-        //Recuperamos los parametros de la peticion.
-        username = registerUser.getUsername();
-        email = registerUser.getEmail();
-        password = registerUser.getPassword();
-
-        //Asignamos una bandera y ejecutamos el Stored Procedured.
-        //Valida las credenciales mediante snippets hardcode. Si es true significa que no esta registrado
-        if (!username.equals("daniel210")) {
-            isRegister = false;
-        }
-
-        //isExistsUser = repository.sp_get_auths_verify_user_estadiadvt(username, password);
-        ResponseHandler response = new ResponseHandler();
-        if (!isRegister) {
-            return response.generateResponse("Peticion exitosa. Usuario ha sido registrado con exito", HttpStatus.OK, registerUser);
-        }
-
-        return response.generateResponse("Error, el usuario existe en la base de datos. Inicia sesion para continuar", HttpStatus.I_AM_A_TEAPOT, registerUser);
-    }*/
-    //</editor-fold>
 }
