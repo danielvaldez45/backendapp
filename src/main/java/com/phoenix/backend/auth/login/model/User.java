@@ -1,73 +1,84 @@
 package com.phoenix.backend.auth.login.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.hibernate.annotations.Type;
 
 /**
  *
- * @author daniel
- * Este objeto objeto de domiio representa una entidad de la tabla: cat_users.
+ * @author daniel (POJO) Este objeto objeto de dominio representa una entidad de
+ * la tabla: cat_users.
  */
-
 @Entity
-@Table(name="cat_auths")
-public class User implements Serializable {
-    @GeneratedValue @Id
-    private Long id;
-    @JsonProperty("username")
+@Table(name = "cat_users")
+public class User {
+
+    @Id
+    @Column(name = "user_id")
+    private int id;
+    private String name;
+    @Column(name = "lastname")
+    private String lastName;
+    @Column(name = "age")
+    private int yearold;
     private String username;
-    @JsonProperty("email")
-    private String email;
-    @JsonProperty("password")
-    private String password;
+    //@Type(type="Auth.class")
+    //@Column
+    //private Auth auth;
 
     public User() {
     }
-    
-    
-    public User(String username, String password) {
+
+    public User(int id, String name, String lastName, int yearold, String username, String password) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.yearold = yearold;
         this.username = username;
-        this.password = password;
+        //this.auth = auth;
     }
 
-    public User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
+    public int getId() {
+        return id;
     }
-    
-    
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public int getYearold() {
+        return yearold;
+    }
+
+    public void setYearold(int yearold) {
+        this.yearold = yearold;
+    }
+
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "Auth{" + "username=" + username + ", password=" + password + '}';
     }
 
 }

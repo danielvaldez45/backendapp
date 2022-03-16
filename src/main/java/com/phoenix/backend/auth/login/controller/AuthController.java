@@ -1,13 +1,17 @@
 package com.phoenix.backend.auth.login.controller;
 
-import com.phoenix.backend.auth.login.model.LoginRequest;
-import com.phoenix.backend.auth.login.model.LoginResponse;
-import com.phoenix.backend.auth.login.model.LogoutRequest;
-import com.phoenix.backend.auth.login.model.LogoutResponse;
-import com.phoenix.backend.auth.login.model.RegisterRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.phoenix.backend.auth.login.model.Auth;
+import com.phoenix.backend.auth.login.http.LoginRequest;
+import com.phoenix.backend.auth.login.http.LoginResponse;
+import com.phoenix.backend.auth.login.http.LogoutRequest;
+import com.phoenix.backend.auth.login.http.LogoutResponse;
+import com.phoenix.backend.auth.login.http.RegisterRequest;
 import com.phoenix.backend.auth.login.repository.AuthRepository;
 
 import com.phoenix.backend.auth.login.model.User;
+import java.io.IOException;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,42 +33,29 @@ public class AuthController {
 
     //<editor-fold defaultstate="collapsed" desc="register function">
     @PostMapping(value = "/register", produces = "application/json")
-    void register(@RequestBody RegisterRequest registerUser) {
-        //Destructuramos el objeto y setteamos los valores en un objeto.
-        boolean isRegister = true;
-        //Entidad User
-        String name;
-        Sring lastName;
-        int age;
-        
-        //Entidad Auth
-        String username;
-        String email;
-        String password;
+    ResponseEntity register(@RequestBody RegisterRequest registerUser) throws JsonProcessingException {
+        System.out.println(registerUser.toString());
+        boolean isSuccess = true;
+        Auth auth = new Auth();
 
-        //Recuperamos los parametros de la peticion.
-        /*username = registerUser.getUsername();
-        email = registerUser.getEmail();
-        password = registerUser.getPassword();
-        
-        User user = new User();
-        //Asignamos una bandera y ejecutamos el Stored Procedured.
-        //Valida las credenciales mediante snippets hardcode. Si es true significa que no esta registrado
-        if (!username.equals("daniel210")) {
-            isRegister = false;
-        }*/
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonRegister = objectMapper.writeValueAsString(registerUser);
 
-        //isExistsUser = repository.sp_get_auths_verify_user_estadiadvt(username, password);
-        
-        if (!isRegister) {
-            //return response.generateResponse("Peticion exitosa. Usuario ha sido registrado con exito", HttpStatus.OK, registerUser);
+        isSuccess = repository.sp_registerUser(jsonRegister);
+        if (isSuccess) {
+            //Generar un token fake y settearlo en el cuerpo de la respuesta.
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new LoginResponse(100, "Registro Exitoso", auth));
+
         }
-
-       //return response.generateResponse("Error, el usuario existe en la base de datos. Inicia sesion para continuar", HttpStatus.I_AM_A_TEAPOT, registerUser);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new LogoutResponse(105, "Error, en el servidor."));
+        //return response.generateResponse("Error, el usuario existe en la base de datos. Inicia sesion para continuar", HttpStatus.I_AM_A_TEAPOT, registerUser);
     }
 
-    //</editor-fold>
-    
+//</editor-fold>
     @GetMapping("/login")
     String Login() {
 
@@ -73,33 +64,43 @@ public class AuthController {
 
     @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
     @ResponseBody
-    ResponseEntity Login(@RequestBody LoginRequest requestLogin) {
+    ResponseEntity Login(@RequestBody LoginRequest requestLogin) throws IOException {
+        boolean isExistsUser = true;
+        //Recuperamos el objeto Auth (Sirve para validar la identidad del usuario en el sistema)
+        //Auth auth = requestLogin.getAuth();
 
-        String username;
-        String password;
+        //Parseamos el objeto como un json
+        /*ObjectMapper objectMapper = new ObjectMapper();
 
-        //Recuperamos los parametros de la peticion.
-        username = requestLogin.getUsername();
-        password = requestLogin.getPassword();
-
-        //Creamos un objeto de tipo usuario.
-        User user = new User(username, password);
-
+        String jsonString = objectMapper.writeValueAsString(auth);
+        System.out.println(jsonString);
+        
         //Asignamos una bandera y ejecutamos el Stored Procedured.
-        boolean isExistsUser;
-        //Refactorizar esto y renombrarlo como un metodo
-        isExistsUser = repository.sp_get_auths_verify_user_estadiadvt(username, password);
 
-        if (isExistsUser) {
+        //Refactorizar esto y renombrarlo como un metodo
+        isExistsUser = repository.getAuthsVerifyUser(jsonString);*/
+        String userJson = "{\"username\":\"daniel210\",\"password\":\"password\"}";
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        Auth auth = objectMapper.readValue(userJson, Auth.class);
+        System.out.println("Auth: " + auth.toString());
+
+        if (!auth.getPassword().equals("password")) {
             //Generar un token fake y settearlo en el cuerpo de la respuesta.
             return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new LoginResponse(100, "Peticion exitosa", user, "12345678"));
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new LoginResponse(100, "Error, el usuario no existe en la base de datos"));
 
         }
+
+        //return ResponseEntity
+        //       .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        //        .body(new LoginResponse(102, "Algo fallo en el servidor", auth));
+        //Generar token
+        auth.setToken("123456789");
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new LoginResponse(102, "Algo fallo en el servidor", user));
+                .status(HttpStatus.OK)
+                .body(new LoginResponse(102, "Peticion exitosa", auth));
     }
 
     @PostMapping(value = "/logout", consumes = "application/json", produces = "application/json")

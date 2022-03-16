@@ -1,4 +1,4 @@
-package com.phoenix.backend.auth.login.model;
+package com.phoenix.backend.auth.login.http;
 
 /**
  *

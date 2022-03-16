@@ -7,7 +7,6 @@ package com.phoenix.backend.auth.login.model;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -15,26 +14,43 @@ import javax.persistence.Table;
  *
  * @author daniel Este objeto pojo representa una abstracion de la tabla:
  * cat_auths.
+ *
  */
 @Entity
 @Table(name = "cat_auths")
 public class Auth {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    private int id;
     private String username;
     private String password;
     private String token;
-    @Column(name="login_date")
-    private Date loginDate;
-    private String status;
 
-    public Long getId() {
+    public Auth() {
+    }
+
+    public Auth(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public Auth(String username, String password, String token) {
+        this.username = username;
+        this.password = password;
+        this.token = token;
+    }
+
+    public Auth(int id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -62,19 +78,8 @@ public class Auth {
         this.token = token;
     }
 
-    public Date getLoginDate() {
-        return loginDate;
-    }
-
-    public void setLoginDate(Date loginDate) {
-        this.loginDate = loginDate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    @Override
+    public String toString() {
+        return "Auth{" + "id=" + id + ", username=" + username + ", password=" + password + ", token=" + token + '}';
     }
 }
