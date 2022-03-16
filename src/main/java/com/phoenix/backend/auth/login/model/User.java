@@ -16,15 +16,14 @@ import org.hibernate.annotations.Type;
 @Table(name = "cat_users")
 public class User {
 
+//    @Column(name = "user_id")
     @Id
-    @Column(name = "user_id")
-    private int id;
+    private int user_id;
     private String name;
-    @Column(name = "lastname")
-    private String lastName;
-    @Column(name = "age")
-    private int yearold;
+    private String lastname;
+    private int age;
     private String username;
+    private String password;
     //@Type(type="Auth.class")
     //@Column
     //private Auth auth;
@@ -32,21 +31,21 @@ public class User {
     public User() {
     }
 
-    public User(int id, String name, String lastName, int yearold, String username, String password) {
-        this.id = id;
+    public User(int user_id, String name, String lastname, int age, String username, String password) {
+        this.user_id = user_id;
         this.name = name;
-        this.lastName = lastName;
-        this.yearold = yearold;
+        this.lastname = lastname;
+        this.age = age;
         this.username = username;
-        //this.auth = auth;
+        this.password = password;
     }
 
-    public int getId() {
-        return id;
+    public int getUser_id() {
+        return user_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     public String getName() {
@@ -57,20 +56,20 @@ public class User {
         this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
-    public int getYearold() {
-        return yearold;
+    public int getAge() {
+        return age;
     }
 
-    public void setYearold(int yearold) {
-        this.yearold = yearold;
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public String getUsername() {
@@ -79,6 +78,19 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "user_id=" + user_id + ", name=" + name + ", lastname=" + lastname + ", age=" + age + ", username=" + username + ", password=" + password + '}';
     }
 
 }

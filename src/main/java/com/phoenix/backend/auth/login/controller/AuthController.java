@@ -33,14 +33,15 @@ public class AuthController {
 
     //<editor-fold defaultstate="collapsed" desc="register function">
     @PostMapping(value = "/register", produces = "application/json")
-    ResponseEntity register(@RequestBody RegisterRequest registerUser) throws JsonProcessingException {
-        System.out.println(registerUser.toString());
+    ResponseEntity register(@RequestBody RegisterRequest request) throws JsonProcessingException {
+        System.out.println(request.getUser().toString());
         boolean isSuccess = true;
         Auth auth = new Auth();
-
+        
+        
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonRegister = objectMapper.writeValueAsString(registerUser);
-
+        String jsonRegister = objectMapper.writeValueAsString(request.getUser());
+        System.out.println(jsonRegister);
         isSuccess = repository.sp_registerUser(jsonRegister);
         if (isSuccess) {
             //Generar un token fake y settearlo en el cuerpo de la respuesta.
