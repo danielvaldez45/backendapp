@@ -10,7 +10,6 @@ import com.phoenix.backend.auth.login.http.LogoutResponse;
 import com.phoenix.backend.auth.login.http.RegisterRequest;
 import com.phoenix.backend.auth.login.repository.AuthRepository;
 
-import com.phoenix.backend.auth.login.model.User;
 import java.io.IOException;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,8 +36,7 @@ public class AuthController {
         System.out.println(request.getUser().toString());
         boolean isSuccess = true;
         Auth auth = new Auth();
-        
-        
+
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonRegister = objectMapper.writeValueAsString(request.getUser());
         System.out.println(jsonRegister);
@@ -66,42 +64,26 @@ public class AuthController {
     @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
     @ResponseBody
     ResponseEntity Login(@RequestBody LoginRequest requestLogin) throws IOException {
-        boolean isExistsUser = true;
-        //Recuperamos el objeto Auth (Sirve para validar la identidad del usuario en el sistema)
-        //Auth auth = requestLogin.getAuth();
-
-        //Parseamos el objeto como un json
-        /*ObjectMapper objectMapper = new ObjectMapper();
-
-        String jsonString = objectMapper.writeValueAsString(auth);
-        System.out.println(jsonString);
-        
-        //Asignamos una bandera y ejecutamos el Stored Procedured.
-
-        //Refactorizar esto y renombrarlo como un metodo
-        isExistsUser = repository.getAuthsVerifyUser(jsonString);*/
-        String userJson = "{\"username\":\"daniel210\",\"password\":\"password\"}";
+        //String userJson = "{\"username\":\"daniel210\",\"password\":\"password\"}";*/
         ObjectMapper objectMapper = new ObjectMapper();
+        String jsonAuth = objectMapper.writeValueAsString(requestLogin.getAuth());
 
-        Auth auth = objectMapper.readValue(userJson, Auth.class);
-        System.out.println("Auth: " + auth.toString());
+        String spAuth = repository.sp_getAuthBUser(jsonAuth);
 
-        if (!auth.getPassword().equals("password")) {
+        Auth auth = objectMapper.readValue(spAuth, Auth.class);
+//        //Desencriptar password y validar
+        if (spAuth != null) {
             //Generar un token fake y settearlo en el cuerpo de la respuesta.
             return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(new LoginResponse(100, "Error, el usuario no existe en la base de datos"));
+                    .status(HttpStatus.OK)
+                    .body(new LoginResponse(102, "Loggeo exitoso!", auth));
 
         }
 
-        //return ResponseEntity
-        //       .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        //        .body(new LoginResponse(102, "Algo fallo en el servidor", auth));
-        //Generar token
-        auth.setToken("123456789");
+//        auth.setToken("123456789");
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new LoginResponse(102, "Peticion exitosa", auth));
+                .status(HttpStatus.NOT_FOUND)
+                .body(new LoginResponse(103, "Error, debes registrarte"));
     }
 
     @PostMapping(value = "/logout", consumes = "application/json", produces = "application/json")

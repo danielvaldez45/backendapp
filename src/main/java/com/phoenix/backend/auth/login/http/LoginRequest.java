@@ -21,4 +21,9 @@ public class LoginRequest {
         this.auth = auth;
     }
 
+    @Override
+    public String toString() {
+        return "LoginRequest{" + "auth=" + auth + '}';
+    }
+
 }
