@@ -19,6 +19,6 @@ public interface AuthRepository extends JpaRepository<User, Long> {
     String sp_getAuthBUser(String auth);
     
     @Procedure("estadia_insert_user_v2")
-    boolean sp_registerUser(String jsonUser);
+    String sp_registerUser(String jsonUser);
     
 }

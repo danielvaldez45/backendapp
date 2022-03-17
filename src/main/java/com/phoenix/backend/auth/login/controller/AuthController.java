@@ -8,6 +8,8 @@ import com.phoenix.backend.auth.login.http.LoginResponse;
 import com.phoenix.backend.auth.login.http.LogoutRequest;
 import com.phoenix.backend.auth.login.http.LogoutResponse;
 import com.phoenix.backend.auth.login.http.RegisterRequest;
+import com.phoenix.backend.auth.login.http.RegisterResponse;
+import com.phoenix.backend.auth.login.model.User;
 import com.phoenix.backend.auth.login.repository.AuthRepository;
 
 import java.io.IOException;
@@ -33,19 +35,24 @@ public class AuthController {
     //<editor-fold defaultstate="collapsed" desc="register function">
     @PostMapping(value = "/register", produces = "application/json")
     ResponseEntity register(@RequestBody RegisterRequest request) throws JsonProcessingException {
-        System.out.println(request.getUser().toString());
+        System.out.println(request.getUser());
+
         boolean isSuccess = true;
         Auth auth = new Auth();
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonRegister = objectMapper.writeValueAsString(request.getUser());
         System.out.println(jsonRegister);
-        isSuccess = repository.sp_registerUser(jsonRegister);
-        if (isSuccess) {
+
+        //Resultado del stored Procedure
+        String spRegister = repository.sp_registerUser(jsonRegister);
+
+        if (spRegister != null) {
+            User userRegister = objectMapper.readValue(spRegister, User.class);
             //Generar un token fake y settearlo en el cuerpo de la respuesta.
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(new LoginResponse(100, "Registro Exitoso", auth));
+                    .body(new RegisterResponse(100, "Registro Exitoso", userRegister));
 
         }
         return ResponseEntity
@@ -53,8 +60,8 @@ public class AuthController {
                 .body(new LogoutResponse(105, "Error, en el servidor."));
         //return response.generateResponse("Error, el usuario existe en la base de datos. Inicia sesion para continuar", HttpStatus.I_AM_A_TEAPOT, registerUser);
     }
+    //</editor-fold>
 
-//</editor-fold>
     @GetMapping("/login")
     String Login() {
 
