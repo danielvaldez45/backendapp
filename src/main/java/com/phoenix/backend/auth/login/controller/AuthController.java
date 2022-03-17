@@ -109,29 +109,32 @@ public class AuthController {
 
     @PostMapping(value = "/logout", consumes = "application/json", produces = "application/json")
     @ResponseBody
-    ResponseEntity logout(@RequestBody LogoutRequest requestLogin) {
-        String token;
-        token = requestLogin.getToken();
+    ResponseEntity logout(@RequestBody LogoutRequest requestLogin) throws JsonProcessingException {
 
-        if (token.isEmpty()) {
+        Auth authSesion = requestLogin.getAuth();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonAuth = objectMapper.writeValueAsString(authSesion);
+
+        String spAuth = repository.sp_deleteToken(jsonAuth);
+
+        if (spAuth.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new LogoutResponse(105, "Error, no existe token."));
         }
 
-        //Validar el token en el sp (stored procedure). Consiste en saber si existe el token en la base de datos.
-        //boolean isToken = true;
-        //Si el token NO es valido se ejecuta el if
-        if (!token.equals("12345")) {
+        Token token = objectMapper.readValue(spAuth, Token.class);
+         
+        if (token.getStatus().equals("0")) {
             return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new LogoutResponse(105, "El token no es valido o expiro"));
+                    .status(HttpStatus.OK)
+                    .body(new LogoutResponse(100, "Se cerro la sesion con exito"));
         }
-
-        //Finalmente
+        
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new LogoutResponse(100, "Se cerro la sesion con exito"));
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new LogoutResponse(105, "Error Interno del servidor"));
     }
 
     public static int numeroAleatorioEnRango(int minimo, int maximo) {
