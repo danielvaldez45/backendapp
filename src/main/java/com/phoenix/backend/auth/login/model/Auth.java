@@ -23,6 +23,7 @@ public class Auth {
     private int auth_id;
     private String username;
     private String password;
+    private String token;
 
     public Auth() {
     }
@@ -37,6 +38,14 @@ public class Auth {
         this.auth_id = auth_id;
         this.username = username;
         this.password = password;
+    }
+
+    public Auth(int user_id, int auth_id, String username, String password, String token) {
+        this.user_id = user_id;
+        this.auth_id = auth_id;
+        this.username = username;
+        this.password = password;
+        this.token = token;
     }
 
     public int getUser_id() {
@@ -69,6 +78,14 @@ public class Auth {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
 }

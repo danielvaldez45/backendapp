@@ -11,13 +11,24 @@ import java.util.Date;
  * @author daniel
  */
 public class Token {
-    private int auth_id;
-    private int token_id;
+
+    private int auth_id; //Valor constante
+    private int token_id; //Valor autoincrementable
     private String token;
     private Date login_date;
     private String status;
 
     public Token() {
+    }
+
+    public Token(String token) {
+        this.token = token;
+    }
+
+    public Token(int auth_id, int token_id, String token) {
+        this.auth_id = auth_id;
+        this.token_id = token_id;
+        this.token = token;
     }
 
     public int getAuth_id() {
@@ -59,6 +70,5 @@ public class Token {
     public void setStatus(String status) {
         this.status = status;
     }
-    
-    
+
 }
