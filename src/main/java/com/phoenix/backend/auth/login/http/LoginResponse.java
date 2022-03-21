@@ -10,17 +10,17 @@ public class LoginResponse {
 
     private int code;
     private String message;
-    private Auth auth;
+    private Auth data;
 
     public LoginResponse(int code, String message) {
         this.code = code;
         this.message = message;
     }
 
-    public LoginResponse(int code, String message, Auth auth) {
+    public LoginResponse(int code, String message, Auth data) {
         this.code = code;
         this.message = message;
-        this.auth = auth;
+        this.data = data;
     }
 
     public int getCode() {
@@ -39,12 +39,12 @@ public class LoginResponse {
         this.message = message;
     }
 
-    public Auth getAuth() {
-        return auth;
+    public Auth getData() {
+        return data;
     }
 
-    public void setAuth(Auth auth) {
-        this.auth = auth;
+    public void setData(Auth data) {
+        this.data = data;
     }
 
 }
